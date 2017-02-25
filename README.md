@@ -1,5 +1,7 @@
 # Masscan-Dahua
-
+Script to search in the range IP adress DVR, NVR, IPC Dahua
+with the default settings.
+And forms of XML device file for use in the import to program Smart PSS
 ## Status: Work in Progress
 
 ## Requirements
@@ -8,6 +10,6 @@
 - Smart PSS - from [Smart Pss] (http://www1.dahuasecurity.com/download_2.html)
 
 ### Usage
-`./masscan_dahua.py -f scan.txt`
+`./masscan_dahua.py -f scan.txt -t threads number`
 
 import Ip_Smart_pss.xml to Smart Pss

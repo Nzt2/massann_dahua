@@ -1,6 +1,7 @@
 #masscan for Dahua DVR NVR IPC
 import os,optparse
 
+
 def parse_result():
     #Парсим результат массскана оставляем только Ip адресса
     file = open('res_scan.txt','r')
@@ -10,8 +11,10 @@ def parse_result():
         if not (string.startswith('#')):
             Ips.write(line[3]+'\n')
     Ips.close()
+    os.remove('res_scan.txt')
 
 def save_xml():
+    #Сохраняем в XML  дял SmartPSS
     login = 'admin'
     password = 'admin'
     file = open('IPs.txt', 'r')
@@ -30,7 +33,7 @@ def save_xml():
     file = open('IPs.txt', 'r')
     count = 1
     a = 1
-    if x<=256:
+    if x<=256:#если файл меньше 256 строк
         xml.write(start_file)
         for string in file.readlines():
             line = string.rstrip('\n')
@@ -41,7 +44,7 @@ def save_xml():
         xml.close()
         file.close()
         print('[+] File save as Ip_Smart_pss.xml')
-    else:
+    else:#Разбиваем на файлы по 256
         xml.write(start_file)
         for string in file.readlines():
             line = string.rstrip('\n')
@@ -64,23 +67,23 @@ def save_xml():
         xml.write(end_file)
         xml.close()
         file.close()
-def masscan(filescan):
+    os.remove('IPs.txt')
+def masscan(filescan,threads):
     #Запускаем mass scan  с нужными параметрами
     print('[*] Starting scan in masscan')
-    os.system('/usr/bin/masscan -p 37777 -iL %s -oL res_scan.txt --rate=500' %filescan)
+    os.system('/usr/bin/masscan -p 37777 -iL %s -oL res_scan.txt --rate=%s' %(filescan,threads))
 
 def main():
-    parser = optparse.OptionParser('%prog' + " -f <Scan file>")
+    parser = optparse.OptionParser('%prog' + " -f <Scan file> -t <threads>")
     parser.add_option('-f', dest='file', type='string', help='Target list file Example; 192.168.1.1-192.168.11.1')
+    parser.add_option('-t', dest='threads',default="500", type='string', help='Threads number for masscan. Default 500')
     (options, args) = parser.parse_args()
     if (options.file==None):
         print("[-] No taget file scan list\n")
         parser.print_help()
         exit(0)
-    masscan(options.file)
+    masscan(options.file,options.threads)
     parse_result()
     save_xml()
 
 main()
-
-
