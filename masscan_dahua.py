@@ -1,6 +1,36 @@
 #masscan for Dahua DVR NVR IPC
-import os,optparse
+import os,optparse,ctypes,platform
 
+login = 'admin'
+password = 'admin'
+
+def Os_type():
+    if platform.system() == "Windows":
+        return 'win'
+    else:
+        return 'nix'
+
+def Auth(Server):
+    if Os_type() == 'win':
+        dll = ctypes.WinDLL("Dll/dhnetsdk.dll")
+        init = dll.CLIENT_Init(Server, 0)
+        dll.CLIENT_Login.restype = ctypes.c_longlong
+        loginH = dll.CLIENT_LoginEx(Server.encode("ascii"), 37777, login.encode("ascii"), password.encode("ascii"), None, None,0, 0)
+        if not loginH == 0:
+            print('[+] Host %s found'%Server)
+            return True
+        else:
+            return False
+    else:
+        dll = ctypes.CDLL("./Dll/libdhnetsdk.so")
+        init = dll.CLIENT_Init(Server, 0)
+        dll.CLIENT_Login.restype = ctypes.c_longlong
+        loginH = dll.CLIENT_Login(Server.encode("ascii"), 37777, login.encode("ascii"), password.encode("ascii"), None)
+        if not loginH == 0:
+            print(loginH)
+            return True
+        else:
+            return False
 
 def parse_result():
     #Парсим результат массскана оставляем только Ip адресса
@@ -9,14 +39,15 @@ def parse_result():
     for string in file.readlines():
         line = string.split(' ')
         if not (string.startswith('#')):
-            Ips.write(line[3]+'\n')
+            if Auth(line[3]):
+                Ips.write(line[3]+'\n')
     Ips.close()
-    os.remove('res_scan.txt')
+
+    ###os.remove('res_scan.txt')
 
 def save_xml():
     #Сохраняем в XML  дял SmartPSS
-    login = 'admin'
-    password = 'admin'
+
     file = open('IPs.txt', 'r')
     xml = open('Ip_Smart_pss.xml', 'w')
     start_file = '''<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
@@ -71,7 +102,10 @@ def save_xml():
 def masscan(filescan,threads):
     #Запускаем mass scan  с нужными параметрами
     print('[*] Starting scan in masscan')
-    os.system('/usr/bin/masscan -p 37777 -iL %s -oL res_scan.txt --rate=%s' %(filescan,threads))
+    if Os_type() =='nix':
+        os.system('/usr/bin/masscan -p 37777 -iL %s -oL res_scan.txt --rate=%s' %(filescan,threads))
+    else:
+        os.system('c:/masscan/masscan.exe -p 37777 -iL %s -oL res_scan.txt --rate=%s' % (filescan, threads))
 
 def main():
     parser = optparse.OptionParser('%prog' + " -f <Scan file> -t <threads>")
@@ -85,5 +119,6 @@ def main():
     masscan(options.file,options.threads)
     parse_result()
     save_xml()
+    os.remove('res_scan.txt')
 
 main()
