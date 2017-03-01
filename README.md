@@ -4,10 +4,10 @@ with the default settings.
 And forms of XML device file for use in the import to program Smart PSS
 ## Status: Work in Progress
 - Linux version don`t work
+
 ## Requirements
 - Python 3
 - masscan - from [masscan](https://github.com/robertdavidgraham/masscan)
-- Dahua SDK - from [Dahua SDK ] (http://www.dahuasecurity.com/download_3.html)
 - Smart PSS - from [Smart Pss] (http://www.dahuasecurity.com/download_2.html)
 
 ### Usage
