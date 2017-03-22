@@ -42,11 +42,11 @@ def parse_result():
             if Auth(line[3]):
                 Ips.write(line[3]+'\n')
     Ips.close()
-
-    ###os.remove('res_scan.txt')
+    file.close()
+    os.remove('res_scan.txt')
 
 def save_xml():
-    #Сохраняем в XML  дял SmartPSS
+    #Сохраняем в XML  для SmartPSS
 
     file = open('IPs.txt', 'r')
     xml = open('Ip_Smart_pss.xml', 'w')
@@ -119,6 +119,6 @@ def main():
     masscan(options.file,options.threads)
     parse_result()
     save_xml()
-    os.remove('res_scan.txt')
+
 
 main()
