@@ -7,6 +7,7 @@ And forms of XML device file for use in the import to program Smart PSS
 
 ## Requirements
 - Python 3
+- ProgressBar - from [PyPi] (https://pypi.python.org/pypi/progressbar33)
 - masscan - from [masscan](https://github.com/robertdavidgraham/masscan)
 - Smart PSS - from [Smart Pss] (http://www.dahuasecurity.com/download_2.html)
 
@@ -14,3 +15,4 @@ And forms of XML device file for use in the import to program Smart PSS
 `./masscan_dahua.py -f scan.txt -t threads number`
 
 import Ip_Smart_pss.xml to Smart Pss
+ 

@@ -1,5 +1,5 @@
 #masscan for Dahua DVR NVR IPC
-import os,optparse,ctypes,platform
+import os,optparse,ctypes,platform,progressbar,time
 
 login = 'admin'
 password = 'admin'
@@ -36,8 +36,16 @@ def parse_result():
     #Парсим результат массскана оставляем только Ip адресса
     file = open('res_scan.txt','r')
     Ips = open('IPs.txt','w')
+    lenn = int(len(file.readlines()))
+    file.close()
+    file = open('res_scan.txt', 'r')
+    bar = progressbar.ProgressBar(maxval=lenn, widgets = ['Прогресс выполнения ',progressbar.Bar(left='[', marker='*', right=']'),progressbar.Percentage()
+    ]).start()
+    i=1
     for string in file.readlines():
         line = string.split(' ')
+        bar.update(i)
+        i = i + 1
         if not (string.startswith('#')):
             if Auth(line[3]):
                 Ips.write(line[3]+'\n')
@@ -105,7 +113,7 @@ def masscan(filescan,threads):
     if Os_type() =='nix':
         os.system('/usr/bin/masscan -p 37777 -iL %s -oL res_scan.txt --rate=%s' %(filescan,threads))
     else:
-        os.system('c:/masscan/masscan.exe -p 37777 -iL %s -oL res_scan.txt --rate=%s' % (filescan, threads))
+        os.system('C:/Users/nz/Desktop/masscan_GUI/masscan.exe -p 37777 -iL %s -oL res_scan.txt --rate=%s' % (filescan, threads))
 
 def main():
     parser = optparse.OptionParser('%prog' + " -f <Scan file> -t <threads>")
