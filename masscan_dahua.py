@@ -18,6 +18,7 @@ def Auth(Server):
         loginH = dll.CLIENT_LoginEx(Server.encode("ascii"), 37777, login.encode("ascii"), password.encode("ascii"), None, None,0, 0)
         if not loginH == 0:
             print('[+] Host %s found'%Server)
+			dll.CLIENT_Logout(loginH)
             return True
         else:
             return False
